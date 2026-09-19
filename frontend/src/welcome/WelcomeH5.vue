@@ -239,7 +239,6 @@ onUnmounted(() => {
   position: fixed;
   inset: 0;
   width: 100%;
-  max-width: 480px;
   height: 100%;
   height: 100dvh;
   margin-inline: auto;
