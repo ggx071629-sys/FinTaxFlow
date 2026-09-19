@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>FinTaxFlow 模拟申报站点</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="../src/static/fintax_logo.jpg" alt="FinTaxFlow" />
+        <strong>模拟申报站点</strong>
+        <span>Demo</span>
+      </header>
+      <div class="content">
+        <p class="notice">本地机器人演示站点 · 不连接真实税务平台</p>
+        <section id="loading" role="status">正在读取申报资料…</section>
+        <p id="error" class="error" role="alert" hidden></p>
+        <button id="retry" type="button" hidden>重新加载</button>
+        <form id="declaration-form" hidden>
+          <h1>增值税模拟申报表</h1>
+          <dl>
+            <dt>纳税人名称</dt>
+            <dd id="company-name"></dd>
+            <dt>纳税人识别号</dt>
+            <dd id="tax-id"></dd>
+            <dt>所属期间</dt>
+            <dd id="period"></dd>
+            <dt>业务标识</dt>
+            <dd id="business-number"></dd>
+          </dl>
+          <label for="sales">本期销售额（元）</label>
+          <input
+            id="sales"
+            name="sales_amount"
+            inputmode="decimal"
+            required
+            aria-describedby="sales-error"
+          />
+          <small id="sales-error" class="field-error"></small>
+          <label for="tax">本期税额（元）</label>
+          <input
+            id="tax"
+            name="tax_amount"
+            inputmode="decimal"
+            required
+            aria-describedby="tax-error"
+          />
+          <small id="tax-error" class="field-error"></small>
+          <p class="hint">样例金额用于表单操作演示，不进行税款计算。</p>
+          <button id="submit" type="submit">提交模拟申报</button>
+        </form>
+        <section id="accepted" hidden>
+          <span class="badge">模拟受理成功</span>
+          <h1>申报已受理</h1>
+          <p>受理编号</p>
+          <strong id="acceptance-number"></strong>
+          <p class="notice">该编号仅供演示，不具备真实申报效力。</p>
+          <button id="receipt" type="button" disabled>回执尚未就绪</button>
+          <button id="refresh" type="button" class="secondary">刷新回执状态</button>
+        </section>
+      </div>
+    </main>
+    <script type="module" src="./portal.js"></script>
+  </body>
+</html>

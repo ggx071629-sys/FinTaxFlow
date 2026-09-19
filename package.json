@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "./start.sh",
+    "start:check": "./start.sh --check",
+    "stop": "./scripts/stop.sh",
+    "stop:all": "./scripts/stop.sh --all"
+  },
+  "dependencies": {
+    "gsap": "^3.15.0"
+  }
+}

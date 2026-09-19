@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: fintax
+      POSTGRES_PASSWORD: fintax
+      POSTGRES_DB: fintaxflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - fintaxflow-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fintax -d fintaxflow"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+volumes:
+  fintaxflow-pg:

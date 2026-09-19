@@ -1,0 +1,189 @@
+{
+  "pages": [
+    // #ifdef MP-WEIXIN
+    {
+      "path": "pages/welcome/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "black",
+        "backgroundColor": "#EDFaff",
+        "disableScroll": true
+      }
+    },
+    // #endif
+    {
+      "path": "pages/login/index",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/company/select",
+      "style": {
+        "navigationBarTitleText": "选择企业",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationBarTitleText": "财税工作台",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/invoice/index",
+      "style": {
+        "navigationBarTitleText": "票据管理",
+        "enablePullDownRefresh": true,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/invoice/detail",
+      "style": {
+        "navigationBarTitleText": "票据详情",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/tax/progress",
+      "style": {
+        "navigationBarTitleText": "报税进度",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/billing/index",
+      "style": {
+        "navigationBarTitleText": "开票记录",
+        "enablePullDownRefresh": true,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/billing/create",
+      "style": {
+        "navigationBarTitleText": "新建开票申请",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/billing/result",
+      "style": {
+        "navigationBarTitleText": "开票申请详情",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/accounting/index",
+      "style": {
+        "navigationBarTitleText": "账务查询",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/mine/index",
+      "style": {
+        "navigationBarTitleText": "我的",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/demo/settings",
+      "style": {
+        "navigationBarTitleText": "演示设置",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/invoice/preview",
+      "style": {
+        "navigationBarTitleText": "发票 PDF 预览",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/about/index",
+      "style": {
+        "navigationBarTitleText": "关于系统",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/billing/import",
+      "style": {
+        "navigationBarTitleText": "导入开票清单",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/billing/batch",
+      "style": {
+        "navigationBarTitleText": "批次详情",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/reconciliation/create",
+      "style": {
+        "navigationBarTitleText": "导入对账数据",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/reconciliation/result",
+      "style": {
+        "navigationBarTitleText": "对账结果",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/tasks/index",
+      "style": {
+        "navigationBarTitleText": "自动化任务",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/tasks/detail",
+      "style": {
+        "navigationBarTitleText": "任务详情",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    },
+    {
+      "path": "pages/tax/receipt",
+      "style": {
+        "navigationBarTitleText": "申报回执",
+        "enablePullDownRefresh": false,
+        "navigationStyle": "default"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#F5F7FB",
+    "backgroundColor": "#F5F7FB"
+  },
+  "uniIdRouter": {}
+}

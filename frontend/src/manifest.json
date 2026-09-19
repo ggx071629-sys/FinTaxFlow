@@ -1,0 +1,25 @@
+{
+  "name": "财税云",
+  "appid": "",
+  "description": "FinTaxFlow 企业财税服务工作台",
+  "versionName": "0.1.0",
+  "versionCode": "100",
+  "vueVersion": "3",
+  "h5": {
+    "title": "财税云 · FinTaxFlow",
+    "router": {
+      "mode": "hash"
+    }
+  },
+  "mp-weixin": {
+    "appid": "wx6695f3eca822418f",
+    "setting": {
+      "urlCheck": false,
+      "coverView": true
+    },
+    "usingComponents": true
+  },
+  "uniStatistics": {
+    "enable": false
+  }
+}
