@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from decimal import Decimal
+from uuid import uuid4
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -86,7 +87,6 @@ COUNTERPARTIES = {
     ],
 }
 
-COMPANY_CODE = {"xinghe": "01", "yuanhang": "02", "yuncheng": "03", "qingwu": "04"}
 
 ACCOUNTING = {
     "xinghe": [("380000.00", "218000.00", "56000.00", "23000.00"), ("325000.00", "210000.00", "48000.00", "21000.00"), ("290000.00", "180000.00", "41000.00", "19000.00")],
@@ -266,7 +266,8 @@ def seed_company_data(db: Session, company: Company) -> None:
             task = BillingTask(
                 company_id=company.id,
                 generation=company.generation,
-                number=f"KP{issued.strftime('%Y%m%d')}{COMPANY_CODE[company.seed_key]}{seq:02d}",
+                # Seed templates may be shared by multiple companies; identifiers are global.
+                number=uuid4().hex,
                 status="SUCCESS",
                 input_snapshot=snapshot,
                 net_amount=Decimal(amounts["net_amount"]),
@@ -291,7 +292,7 @@ def seed_company_data(db: Session, company: Company) -> None:
         invoice = Invoice(
             company_id=company.id,
             generation=company.generation,
-            number=f"26{issued.strftime('%y%m%d')}{COMPANY_CODE[company.seed_key]}{seq:010d}",
+            number=uuid4().hex,
             invoice_type=spec["type"],
             direction=spec["dir"],
             issued_at=issued,
@@ -342,7 +343,7 @@ def seed_company_data(db: Session, company: Company) -> None:
     failed = BillingTask(
         company_id=company.id,
         generation=company.generation,
-        number=f"KP{failed_time.strftime('%Y%m%d')}{COMPANY_CODE[company.seed_key]}99",
+        number=uuid4().hex,
         status="FAILED",
         input_snapshot={
             "invoice_type": "DIGITAL_NORMAL",

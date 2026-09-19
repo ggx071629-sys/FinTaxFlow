@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import logging
 import shutil
+from pathlib import Path
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, text
 from sqlalchemy.orm import Session
 
 from app.core import clock
@@ -48,40 +50,87 @@ def _clear_company(db: Session, company: Company) -> None:
     db.flush()
 
 
-def execute_reset(db: Session, run: ResetRun, company: Company) -> ResetRun:
-    now = clock.now()
-    run.status = "PROCESSING"
-    run.updated_at = now
-    db.flush()
-    company.generation += 1
-    _clear_company(db, company)
-    folder = company_pdf_dir(company.id)
+def _folders(company: Company) -> list[Path]:
+    from app.core.config import get_settings
+    return [company_pdf_dir(company.id), get_settings().rpa_evidence_dir / str(company.id)]
+
+
+def _backup(folder: Path, run: ResetRun) -> Path:
+    return folder.with_name(f".{folder.name}.reset-{run.id}")
+
+
+def _finish_cleanup(db: Session, run: ResetRun, company: Company) -> ResetRun:
+    from app.core.config import get_settings
+    db.execute(text("SELECT pg_advisory_xact_lock(:k)"), {"k": get_settings().processor_lock_key})
+    db.refresh(run)
+    if run.status == "SUCCESS":
+        return run
     try:
-        if folder.exists():
-            shutil.rmtree(folder)
-        from app.core.config import get_settings
-        rpa_folder = get_settings().rpa_evidence_dir / str(company.id)
-        if rpa_folder.exists():
-            shutil.rmtree(rpa_folder)
+        for folder in _folders(company):
+            backup = _backup(folder, run)
+            if backup.exists():
+                shutil.rmtree(backup)
     except OSError:
         run.status = "FAILED"
-        run.message = "文件清理未完成，请重试恢复"
-        run.updated_at = clock.now()
-        return run
-    try:
-        seed_company_data(db, company)
-    except Exception:
-        run.status = "FAILED"
-        run.message = "样例重建失败，请重试恢复"
-        run.updated_at = clock.now()
-        return run
-    if folder.exists() is False:
-        # PDFs are written under the company dir during seed; absence is OK only if no invoices.
-        pass
-    run.status = "SUCCESS"
-    run.message = "当前企业演示数据已恢复"
+        run.message = "样例已重建，文件清理未完成，请重试恢复"
+    else:
+        run.status = "SUCCESS"
+        run.message = "当前企业演示数据已恢复"
     run.updated_at = clock.now()
+    db.commit()
     return run
+
+
+def execute_reset(db: Session, run: ResetRun, company: Company) -> ResetRun:
+    """Keep original artifacts recoverable until the replacement DB is committed."""
+    run.status = "PROCESSING"
+    run.updated_at = clock.now()
+    db.flush()
+    folders = _folders(company)
+    staged: list[tuple[Path, Path]] = []
+    prepared: list[Path] = []
+
+    def restore_files() -> None:
+        for folder in reversed(prepared):
+            if folder.exists():
+                shutil.rmtree(folder)
+        for folder, backup in reversed(staged):
+            backup.rename(folder)
+
+    try:
+        with db.begin_nested():
+            # Rename on the same volume, without deleting the only copy of any file.
+            for folder in folders:
+                if folder.exists():
+                    backup = _backup(folder, run)
+                    if backup.exists():
+                        raise OSError("A previous reset backup requires recovery")
+                    folder.rename(backup)
+                    staged.append((folder, backup))
+                prepared.append(folder)
+            company.generation += 1
+            _clear_company(db, company)
+            seed_company_data(db, company)
+            db.flush()
+    except Exception:
+        logging.getLogger(__name__).exception("Reset rebuild failed; restoring original artifacts")
+        restore_files()
+        run.status = "FAILED"
+        run.message = "演示恢复未完成，原数据和文件已保留，请重试恢复"
+        run.updated_at = clock.now()
+        db.flush()
+        return run
+
+    run.message = "样例已重建，正在清理原文件"
+    run.updated_at = clock.now()
+    try:
+        # Confirm durability before returning success or discarding original artifacts.
+        db.commit()
+    except Exception:
+        db.rollback()
+        restore_files()
+        raise ApiError(503, "RESET_NOT_COMMITTED", "恢复尚未提交，原文件已保留，请使用原请求重试")
+    return _finish_cleanup(db, run, company)
 
 
 def start_reset(
@@ -96,7 +145,12 @@ def start_reset(
         run = db.get(ResetRun, existing.object_id)
         if run is None:
             raise ApiError(409, "IDEMPOTENCY_CONFLICT", "原恢复记录已不存在")
-        if run.status in ("SUCCESS", "PROCESSING", "PENDING"):
+        if run.status == "PROCESSING" or (run.status == "FAILED" and any(
+            _backup(folder, run).exists() for folder in _folders(company)
+        )):
+            _finish_cleanup(db, run, company)
+            return {"id": str(run.id), "status": run.status, "message": run.message}
+        if run.status in ("SUCCESS", "PENDING"):
             return {"id": str(run.id), "status": run.status, "message": run.message}
         execute_reset(db, run, company)
         return {"id": str(run.id), "status": run.status, "message": run.message}

@@ -111,7 +111,8 @@ async function restore() {
 }
 async function refresh() {
   if (resetBusy.value) return;
-  if (!run.value) {
+  if (!run.value || run.value.status === 'PROCESSING') {
+    // The server resumes committed cleanup with the same idempotency key.
     await restore();
     return;
   }

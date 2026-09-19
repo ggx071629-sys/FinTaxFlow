@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from io import BytesIO
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
@@ -71,9 +72,13 @@ def write_invoice_pdf(invoice: Invoice) -> Path:
     data = render_invoice_pdf(invoice)
     if not data.startswith(b"%PDF-"):
         raise RuntimeError("generated file is not a PDF")
-    temporary = path.with_suffix(".tmp")
-    temporary.write_bytes(data)
-    temporary.replace(path)
+    with NamedTemporaryFile(dir=folder, prefix=f".{invoice.id}-", suffix=".tmp", delete=False) as stream:
+        temporary = Path(stream.name)
+        stream.write(data)
+    try:
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
     return path
 
 

@@ -11,6 +11,7 @@ from app.db import get_db
 from app.models import User
 from app.serialize import invoice_out
 from app.services import queries
+from app.services.pdf import company_pdf_dir, write_invoice_pdf
 
 router = APIRouter(tags=["invoices"])
 
@@ -67,5 +68,12 @@ def invoice_pdf(
         raise ApiError(404, "PDF_UNAVAILABLE", "文件暂不可用，请稍后重试")
     path = Path(invoice.pdf_path)
     if not path.is_file():
-        raise ApiError(404, "PDF_UNAVAILABLE", "文件暂不可用，请稍后重试")
+        # Generated simulation artifacts can be recovered from the owned invoice snapshot.
+        # Never regenerate an arbitrary path or mutate the invoice/business identity.
+        if path != company_pdf_dir(invoice.company_id) / f"{invoice.id}.pdf":
+            raise ApiError(404, "PDF_UNAVAILABLE", "文件暂不可用，请稍后重试")
+        try:
+            write_invoice_pdf(invoice)
+        except OSError:
+            raise ApiError(503, "PDF_UNAVAILABLE", "文件恢复暂未完成，请稍后重试") from None
     return FileResponse(path, media_type="application/pdf", filename=f"{invoice.number}.pdf")
