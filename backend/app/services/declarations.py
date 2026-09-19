@@ -103,18 +103,34 @@ def context(db,company,dec):
                 **({'acceptance_number':dec.acceptance_number} if dec.acceptance_number else {}))
 
 
+def render_receipt_pdf(company, dec):
+    pdfmetrics.registerFont(UnicodeCIDFont('STSong-Light'))
+    output = io.BytesIO()
+    pdf = canvas.Canvas(output, invariant=1)
+    pdf.setTitle('虚构演示申报回执')
+    pdf.saveState()
+    pdf.setFillGray(0.80)
+    pdf.translate(298, 420)
+    pdf.rotate(32)
+    pdf.setFont('STSong-Light', 28)
+    pdf.drawCentredString(0, 0, '虚构演示 · 非真实税务凭证')
+    pdf.restoreState()
+    pdf.setFont('STSong-Light', 12)
+    for n, line in enumerate(['FinTaxFlow 模拟申报回执',
+            '虚构数据，仅供功能演示，与任何真实企业无关',
+            '非真实税务申报凭证，不具有申报、报销或抵扣效力', company.name,
+            '企业测试编号：' + company.tax_id, '所属期：' + dec.period, '税种：增值税',
+            '模拟受理编号：' + dec.acceptance_number, '业务标识：' + dec.business_number,
+            '样例销售额：' + dec.sales_amount, '样例税额：' + dec.tax_amount,
+            '受理时间：' + clock.iso(dec.accepted_at)]):
+        pdf.drawString(40, 800 - n * 32, line)
+    pdf.save()
+    return output.getvalue()
+
+
 def prepare_receipt(db,company,dec):
     if dec.receipt_file_id:return
-    pdfmetrics.registerFont(UnicodeCIDFont('STSong-Light'))
-    output=io.BytesIO();pdf=canvas.Canvas(output);pdf.setFont('STSong-Light',16)
-    for n,line in enumerate(['FinTaxFlow 模拟申报回执','演示文件，非真实税务申报凭证',company.name,
-                             '纳税人识别号：'+company.tax_id,'所属期：'+dec.period,'税种：增值税',
-                             '受理编号：'+dec.acceptance_number,'业务标识：'+dec.business_number,
-                             '样例销售额：'+dec.sales_amount,'样例税额：'+dec.tax_amount,
-                             '受理时间：'+clock.iso(dec.accepted_at)]):
-        pdf.drawString(40,800-n*32,line)
-    pdf.save()
-    dec.receipt_file_id=a.add_file(db,company,'模拟申报回执.pdf','application/pdf',output.getvalue()).id
+    dec.receipt_file_id=a.add_file(db,company,'模拟申报回执.pdf','application/pdf',render_receipt_pdf(company,dec)).id
 
 
 def accept(db,user,company,dec,body,key):

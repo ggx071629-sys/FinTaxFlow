@@ -27,7 +27,15 @@
     "@vue/runtime-core": "3.4.21",
     "prettier": "^3.6.2",
     "typescript": "5.6.3",
-    "vite": "5.2.8",
+    "vite": "5.4.21",
     "vue-tsc": "2.1.10"
+  },
+  "overrides": {
+    "@intlify/core-base": "9.14.5",
+    "@intlify/message-compiler": "9.14.5",
+    "@intlify/shared": "9.14.5",
+    "@intlify/message-resolver": "9.1.11",
+    "@intlify/runtime": "9.1.10",
+    "@intlify/vue-devtools": "9.14.1"
   }
 }

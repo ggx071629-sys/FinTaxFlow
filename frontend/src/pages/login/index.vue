@@ -13,9 +13,10 @@ const username = ref(''),
   busy = ref(false),
   error = ref(''),
   accounts = ref(false);
+const cloudDeployment = import.meta.env.VITE_CLOUD_DEPLOYMENT === 'true';
 const demos = [
-  { username: 'demo_boss01', password: '123456', name: '李总', companies: '星河科技 / 远航企业' },
-  { username: 'demo_boss02', password: '123456', name: '王总', companies: '云程科技 / 青梧数字' }
+  { username: 'demo_boss01', password: cloudDeployment ? '' : '123456', name: '李总', companies: '虚构演示企业 A / B' },
+  { username: 'demo_boss02', password: cloudDeployment ? '' : '123456', name: '王总', companies: '虚构演示企业 C / D' }
 ];
 function fillDemo(account: (typeof demos)[number]) {
   username.value = account.username;
@@ -107,7 +108,7 @@ async function login() {
     </view>
     <ModalSheet :open="accounts" title="演示账号说明" @close="accounts = false">
       <text class="notice">
-        以下为后端种子账号。填入后仍须通过密码校验，不能跳过登录。每个账号拥有独立的两家企业。
+        {{ cloudDeployment ? '选择账号后，请输入管理员提供的演示密码。账号之间的企业数据相互隔离。' : '以下为后端种子账号。填入后仍须通过密码校验，不能跳过登录。每个账号拥有独立的两家企业。' }}
       </text>
       <button
         v-for="account in demos"
@@ -117,8 +118,8 @@ async function login() {
         @click="fillDemo(account)"
       >
         <text class="list-title">{{ account.name }} · {{ account.username }}</text>
-        <text class="caption">密码 123456 · {{ account.companies }}</text>
-        <text class="caption">点击填入，仍需点登录完成校验</text>
+        <text class="caption">{{ cloudDeployment ? '请使用分配的密码' : '密码 123456' }} · {{ account.companies }}</text>
+        <text class="caption">{{ cloudDeployment ? '点击填入账号，再输入密码登录' : '点击填入，仍需点登录完成校验' }}</text>
       </button>
       <button class="ft-button primary" style="margin-top: 20px" @click="accounts = false">
         知道了

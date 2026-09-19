@@ -62,7 +62,7 @@ async function open() {
               <text>{{ data.company_name }}</text>
             </view>
             <view class="detail-row">
-              <text>纳税人识别号</text>
+              <text>企业测试编号</text>
               <text>{{ data.tax_id }}</text>
             </view>
             <view class="detail-row">

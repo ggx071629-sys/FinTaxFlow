@@ -185,3 +185,7 @@ docker compose logs --tail=100 postgres
 
 - [前端开发说明](frontend/README.md) / [后端开发说明](backend/README.md)：分别运行、配置与调试。
 - [API 契约](frontend/API_CONTRACT.md)：请求、响应、幂等、文件与企业隔离约定。
+
+## 虚构演示数据
+
+预置企业和交易方均使用明确的虚构名称，`DEMO` 编号仅为测试标识。开票、验真和申报结果均为模拟，不具有真实票据或税务申报效力。请勿录入真实财税资料。[现有数据更新与回退](deploy/cloud/DEMO-IDENTITY.md)。

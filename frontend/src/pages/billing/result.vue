@@ -95,7 +95,7 @@ const titles = {
             <text>{{ data.input.buyer_name }}</text>
           </view>
           <view class="detail-row">
-            <text>购买方税号</text>
+            <text>购买方测试编号</text>
             <text>{{ data.input.buyer_tax_id }}</text>
           </view>
           <view class="detail-row">

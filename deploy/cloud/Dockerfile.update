@@ -1,0 +1,8 @@
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+COPY backend/app/ /app/backend/app/
+COPY backend/samples/ /app/backend/samples/
+COPY frontend/portal/ /app/frontend/portal/
+COPY deploy/cloud/update_demo_identities.py /app/deploy/update_demo_identities.py
+ARG REVISION
+LABEL org.opencontainers.image.revision=$REVISION org.opencontainers.image.title="FinTaxFlow explicit demo identities"

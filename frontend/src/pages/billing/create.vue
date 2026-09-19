@@ -27,7 +27,7 @@ const savedForm = ref(JSON.stringify(form));
 const unsavedChanges = computed(() => JSON.stringify(form) !== savedForm.value);
 const fields = [
   { key: 'buyer_name', label: '购买方名称', placeholder: '请输入购买方完整名称', max: 120 },
-  { key: 'buyer_tax_id', label: '购买方税号', placeholder: '18 位大写字母或数字', max: 18 },
+  { key: 'buyer_tax_id', label: '购买方测试编号', placeholder: '如 DEMO00000000000001', max: 18 },
   { key: 'item_name', label: '开票项目', placeholder: '例如：技术服务费', max: 120 },
   { key: 'total_amount', label: '开票金额（含税）', placeholder: '0.00', max: 13 },
   { key: 'email', label: '接收邮箱（选填）', placeholder: '选填，演示环境不发送邮件', max: 120 }
@@ -241,7 +241,7 @@ async function submit() {
         <text>{{ form.buyer_name }}</text>
       </view>
       <view class="detail-row">
-        <text>税号</text>
+        <text>测试编号</text>
         <text>{{ form.buyer_tax_id }}</text>
       </view>
       <view class="detail-row">

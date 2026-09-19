@@ -10,7 +10,7 @@ import CountStrip from './CountStrip.vue';
 import StatePanel from './StatePanel.vue';
 const props = defineProps<{ value: ImportValidation }>();
 const fieldLabels: Record<string, string> = {
-  business_number: '业务单号', buyer_name: '购买方名称', buyer_tax_id: '购买方税号',
+  business_number: '业务单号', buyer_name: '购买方名称', buyer_tax_id: '购买方测试编号',
   item_name: '项目', total_amount: '含税金额', tax_rate: '税率', invoice_type: '票种',
   email: '邮箱', remark: '备注', transaction_date: '交易日期', counterparty: '交易对方',
   direction: '收付方向', amount: '金额'

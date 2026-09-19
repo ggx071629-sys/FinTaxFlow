@@ -19,30 +19,32 @@ pdfmetrics.registerFont(UnicodeCIDFont(FONT))
 
 def render_invoice_pdf(invoice: Invoice) -> bytes:
     buffer = BytesIO()
-    page = canvas.Canvas(buffer, pagesize=A4)
+    page = canvas.Canvas(buffer, pagesize=A4, invariant=1)
     width, height = A4
     page.setTitle(f"演示发票 {invoice.number}")
-    page.setFillGray(0.88)
+    page.setFillGray(0.80)
     page.saveState()
     page.translate(width / 2, height / 2)
     page.rotate(32)
     page.setFont(FONT, 28)
-    page.drawCentredString(0, 0, "演示文件，非真实发票")
+    page.drawCentredString(0, 0, "虚构演示 · 非真实发票")
     page.restoreState()
     page.setFillGray(0)
     page.setFont(FONT, 18)
     page.drawCentredString(width / 2, height - 28 * mm, "电子发票（演示）")
     page.setFont(FONT, 11)
     page.drawCentredString(width / 2, height - 36 * mm, "演示文件，非真实发票 · 不具有票据效力")
-    y = height - 50 * mm
+    page.setFont(FONT, 10)
+    page.drawCentredString(width / 2, height - 43 * mm, "虚构数据，仅供功能演示，与任何真实企业无关")
+    y = height - 56 * mm
     lines = [
         f"发票号码：{invoice.number}",
         f"开票日期：{invoice.issued_at.strftime('%Y-%m-%d')}",
         f"发票类型：{invoice.invoice_type}　方向：{invoice.direction}",
         f"购买方：{invoice.buyer_name}",
-        f"购买方税号：{invoice.buyer_tax_id}",
+        f"购买方测试编号：{invoice.buyer_tax_id}",
         f"销售方：{invoice.seller_name}",
-        f"销售方税号：{invoice.seller_tax_id}",
+        f"销售方测试编号：{invoice.seller_tax_id}",
         f"项目名称：{invoice.item_name}",
         f"税率：{invoice.tax_rate}",
         f"不含税金额：{money(invoice.net_amount)} 元",
@@ -69,7 +71,9 @@ def write_invoice_pdf(invoice: Invoice) -> Path:
     data = render_invoice_pdf(invoice)
     if not data.startswith(b"%PDF-"):
         raise RuntimeError("generated file is not a PDF")
-    path.write_bytes(data)
+    temporary = path.with_suffix(".tmp")
+    temporary.write_bytes(data)
+    temporary.replace(path)
     return path
 
 

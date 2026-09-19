@@ -75,7 +75,7 @@ function copy() {
           >
             <text class="caption">{{ p.label }}</text>
             <text class="list-title">{{ p.value.name }}</text>
-            <text class="caption" selectable>税号 {{ p.value.tax_id }}</text>
+            <text class="caption" selectable>测试编号 {{ p.value.tax_id }}</text>
           </view>
         </view>
         <view class="card">
