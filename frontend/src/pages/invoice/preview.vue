@@ -11,6 +11,9 @@ import type { Invoice } from '../../types/api';
 import AppShell from '../../components/AppShell.vue';
 import CompanyBar from '../../components/CompanyBar.vue';
 import StatePanel from '../../components/StatePanel.vue';
+// #ifdef H5
+import PdfViewerH5 from '../../components/PdfViewerH5.vue';
+// #endif
 const id = ref(''),
   invoice = ref<Invoice | null>(null),
   busy = ref(false),
@@ -77,7 +80,7 @@ async function load() {
       <template v-if="url">
         <!-- #ifdef H5 -->
         <view v-if="url !== 'native'" class="pdf-actions">
-          <a class="ft-button secondary" :href="url" target="_blank" rel="noopener noreferrer">
+          <a class="ft-button secondary" :href="`#/pages/invoice/preview?id=${encodeURIComponent(id)}`" target="_blank" rel="noopener noreferrer">
             新窗口打开
           </a>
           <a
@@ -88,22 +91,7 @@ async function load() {
             下载 PDF
           </a>
         </view>
-        <text class="notice">若预览为空白，可新窗口打开或下载查看。</text>
-        <iframe
-          v-if="url !== 'native'"
-          :src="url"
-          title="演示发票 PDF 文档，支持滚动和缩放"
-          style="
-            width: 100%;
-            height: 65vh;
-            border: 1px solid #d6dfe9;
-            border-radius: 12px;
-            background: white;
-          "
-        />
-        <text class="caption" style="display: block; margin: 12px 0">
-          使用文档查看器中的页码、滚动与缩放控件。
-        </text>
+        <PdfViewerH5 v-if="url !== 'native'" :src="url" />
         <!-- #endif -->
         <!-- #ifdef MP-WEIXIN -->
         <view class="card">
