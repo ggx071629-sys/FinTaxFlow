@@ -239,9 +239,12 @@ onUnmounted(() => {
   position: fixed;
   inset: 0;
   width: 100%;
+  max-width: 480px;
   height: 100%;
   height: 100dvh;
   margin-inline: auto;
+  /* Mask only the desktop gutters; keep the center transparent during exit. */
+  box-shadow: 0 0 0 100vmax var(--canvas, #f5f7fb);
   z-index: 2147483000;
   overflow: hidden;
   isolation: isolate;
